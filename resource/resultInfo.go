@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.resultInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/resultinfo?view=graph-rest-1.0
 type ResultInfo struct {
 	ODataType string `json:"@odata.type"`
 	Code      int32  `json:"code,omitempty"`

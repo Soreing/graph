@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.chatInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/chatinfo?view=graph-rest-1.0
 type ChatInfo struct {
 	ODataType           string `json:"@odata.type"`
 	MessageId           string `json:"messageId,omitempty"`

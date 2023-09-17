@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.outgoingCallOptions
+// https://learn.microsoft.com/en-us/graph/api/resources/outgoingcalloptions?view=graph-rest-1.0
 type OutgoingCallOptions struct {
 	ODataType                           string `json:"@odata.type"`
 	HideBotAfterEscalation              *bool  `json:"hideBotAfterEscalation,omitempty"`

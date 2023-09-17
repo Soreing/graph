@@ -1,34 +1,42 @@
 package resource
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 
-	"github.com/Soreing/fastjson/reader"
+	"github.com/Soreing/parsley"
+	parse "github.com/Soreing/parsley"
+	reader "github.com/Soreing/parsley/reader"
 )
 
-//fastjson:skip
+//parsley:skip
 type AnyResource struct {
 	value   any
 	rType   ResourceType
 	isSlice bool
 }
 
+func (r *AnyResource) set(v any, rt ResourceType, slc bool) {
+	r.value = v
+	r.rType = rt
+	r.isSlice = slc
+}
+
 func (r *AnyResource) SetValue(val any) (err error) {
 	r.value = val
 	if arr, ok := val.([]Resource); ok {
 		r.isSlice = true
-		if len(arr) > 0 {
+		if len(arr) == 0 {
+			r.rType = UnknownResourceType
+		} else {
 			t, s := arr[0].GetType()
-			for i := range arr {
-				if nt, ns := arr[i].GetType(); nt != t || ns != s {
+			for _, rs := range arr {
+				if nt, ns := rs.GetType(); nt != t || ns != s {
 					t = MixedResourceType
 					break
 				}
 			}
 			r.rType = t
-		} else {
-			r.rType = UnknownResourceType
 		}
 	} else if obj, ok := val.(Resource); ok {
 		r.rType, _ = obj.GetType()
@@ -50,9 +58,9 @@ func (r *AnyResource) GetType() (ResourceType, bool) {
 func (r *AnyResource) Validate() bool {
 	if r.isSlice {
 		slc := r.value.([]Resource)
-		for i := range slc {
-			t, _ := slc[i].GetType()
-			if t != r.rType || !slc[i].Validate() {
+		for _, rs := range slc {
+			t, _ := rs.GetType()
+			if t != r.rType || !rs.Validate() {
 				return false
 			}
 		}
@@ -66,15 +74,35 @@ func (r *AnyResource) Validate() bool {
 	return true
 }
 
+func (r *AnyResource) UnmarshalJSON(data []byte) (err error) {
+	if err = parsley.Unmarshal(data, r); err == nil {
+		if ok := r.Validate(); !ok {
+			err = NewValidationError()
+		}
+	}
+	return
+}
+
+func pickFilter(odt []byte, filters []parse.Filter) []parse.Filter {
+	for i := range filters {
+		if string(odt) == filters[i].Field {
+			return filters[i].Filter
+		}
+	}
+	return nil
+}
+
 func peekODataType(r *reader.Reader) (tp []byte, err error) {
 	var key []byte
 	pos := r.GetPosition()
 	err = r.OpenObject()
+
 	for err == nil {
-		if key, err = r.GetKey(); err == nil {
+		key, err = r.Key()
+		if err == nil {
 			switch string(key) {
 			case "@odata.type":
-				tp, err = r.GetByteArray()
+				tp, err = r.Bytes()
 				r.SetPosition(pos)
 				return
 			default:
@@ -82,62 +110,86 @@ func peekODataType(r *reader.Reader) (tp []byte, err error) {
 			}
 
 			if err == nil && !r.Next() {
-				err = r.CloseObject()
 				break
 			}
 		}
 	}
+
+	err = fmt.Errorf("data type field not found")
 	r.SetPosition(pos)
 	return
 }
 
-func (o *AnyResource) sequenceResource(r *reader.Reader, idx int) (res []Resource, err error) {
+func (o *AnyResource) sequence(
+	r *reader.Reader,
+	f []parse.Filter,
+	idx int,
+) (res []Resource, err error) {
 	var odt []byte
-	if odt, err = peekODataType(r); err == nil {
+	odt, err = peekODataType(r)
+	if err == nil {
 		obj := NewResource(odt)
-		if err = obj.UnmarshalFastJSON(r); err == nil {
+		flt := pickFilter(odt, f)
+		err = obj.DecodeObjectPJSON(r, flt)
+		if err == nil {
 			if !r.Next() {
 				res = make([]Resource, idx+1)
 				res[idx] = obj
-				return
-			} else if res, err = o.sequenceResource(r, idx+1); err == nil {
-				res[idx] = obj
+			} else {
+				res, err = o.sequence(r, f, idx+1)
+				if err == nil {
+					res[idx] = obj
+				}
 			}
 		}
 	}
 	return
 }
 
-func (o *AnyResource) resourceSlice(r *reader.Reader) (res []Resource, err error) {
-	if err = r.OpenArray(); err == nil {
-		if res, err = o.sequenceResource(r, 0); err == nil {
+func (o *AnyResource) slice(
+	r *reader.Reader,
+	f []parse.Filter,
+) (res []Resource, err error) {
+	err = r.OpenArray()
+	if err == nil {
+		res, err = o.sequence(r, f, 0)
+		if err == nil {
 			err = r.CloseArray()
 		}
 	}
 	return
 }
 
-func (o *AnyResource) UnmarshalFastJSON(r *reader.Reader) (err error) {
-	switch r.GetType() {
+func (o *AnyResource) DecodeObjectPJSON(
+	r *reader.Reader,
+	f []parse.Filter,
+) (err error) {
+	switch r.Token() {
+	case reader.NullToken:
+		o.set(nil, NullResourceType, false)
+
 	case reader.ObjectToken:
 		var odt []byte
-		if odt, err = peekODataType(r); err == nil {
+		odt, err = peekODataType(r)
+		if err == nil {
 			obj := NewResource(odt)
-			if err = obj.UnmarshalFastJSON(r); err == nil {
+			flt := pickFilter(odt, f)
+			err = obj.DecodeObjectPJSON(r, flt)
+			if err == nil {
 				err = o.SetValue(obj)
 			}
 		}
+
 	case reader.ArrayToken:
 		var slc []Resource
-		if slc, err = o.resourceSlice(r); err == nil {
+		slc, err = o.slice(r, f)
+		if err == nil {
 			err = o.SetValue(slc)
 		}
+
 	default:
 		err = errors.New("not a resource")
 	}
-	return
-}
 
-func (o *AnyResource) MarshalJSON() ([]byte, error) {
-	return json.Marshal(o.value)
+	return
 }

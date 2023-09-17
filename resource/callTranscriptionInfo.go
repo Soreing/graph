@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+// microsoft.graph.callTranscriptionInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/calltranscriptioninfo?view=graph-rest-1.0
 type CallTranscriptionInfo struct {
 	ODataType            string    `json:"@odata.type"`
 	LastModifiedDateTime time.Time `json:"lastModifiedDateTime,omitempty"`

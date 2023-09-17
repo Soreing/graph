@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.identity
+// https://learn.microsoft.com/en-us/graph/api/resources/identity?view=graph-rest-1.0
 type Identity struct {
 	ODataType        string `json:"@odata.type"`
 	AcsResourceId    string `json:"acsResourceId,omitempty"`

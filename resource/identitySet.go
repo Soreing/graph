@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.identitySet
+// https://learn.microsoft.com/en-us/graph/api/resources/identityset?view=graph-rest-1.0
 type IdentitySet struct {
 	ODataType   string    `json:"@odata.type"`
 	AcsUser     *Identity `json:"acsUser,omitempty"`
@@ -15,13 +17,17 @@ func (r *IdentitySet) GetType() (ResourceType, bool) {
 func (r *IdentitySet) Validate() bool {
 	if r.ODataType != IdentitySetODataType {
 		return false
-	} else if r.AcsUser != nil && !r.AcsUser.Validate() {
+	}
+	if r.AcsUser != nil && !r.AcsUser.Validate() {
 		return false
-	} else if r.Application != nil && !r.Application.Validate() {
+	}
+	if r.Application != nil && !r.Application.Validate() {
 		return false
-	} else if r.Phone != nil && !r.Phone.Validate() {
+	}
+	if r.Phone != nil && !r.Phone.Validate() {
 		return false
-	} else if r.User != nil && !r.User.Validate() {
+	}
+	if r.User != nil && !r.User.Validate() {
 		return false
 	}
 	return true

@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.commsNotification
+// https://learn.microsoft.com/en-us/graph/api/resources/commsnotification?view=graph-rest-1.0
 type CommsNotification struct {
 	ODataType    string       `json:"@odata.type"`
 	ChangeType   string       `json:"changeType,omitempty"`
@@ -12,5 +14,11 @@ func (r *CommsNotification) GetType() (ResourceType, bool) {
 }
 
 func (r *CommsNotification) Validate() bool {
-	return true // TODO
+	if r.ODataType != CommsNotificationODataType {
+		return false
+	}
+	if r.ResourceData != nil && !r.ResourceData.Validate() {
+		return false
+	}
+	return true
 }

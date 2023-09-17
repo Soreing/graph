@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.joinMeetingIdMeetingInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/joinmeetingidmeetinginfo?view=graph-rest-1.0
 type JoinMeetingIdMeetingInfo struct {
 	ODataType     string `json:"@odata.type"`
 	JoinMeetingId string `json:"joinMeetingId,omitempty"`

@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.mediaStream
+// https://learn.microsoft.com/en-us/graph/api/resources/mediastream?view=graph-rest-1.0
 type MediaStream struct {
 	ODataType   string `json:"@odata.type"`
 	Direction   string `json:"direction,omitempty"`

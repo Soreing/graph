@@ -1,20 +1,45 @@
-package gograph
+package graft
 
 import (
-	"errors"
-
-	"github.com/Soreing/fastjson/reader"
-	"github.com/Soreing/gograph/resource"
+	"github.com/Soreing/graft/resource"
+	"github.com/Soreing/parsley"
 )
 
-func ParseResource(dat []byte) (res *resource.AnyResource, err error) {
-	r := reader.NewReader(dat)
-	res = &resource.AnyResource{}
-	if err = res.UnmarshalFastJSON(r); err != nil {
-		return nil, err
+// ParseResource parses JSON byte array into a msft graph resource
+func ParseResource(
+	dat []byte,
+	res resource.Resource,
+	cfgs ...parsley.Config,
+) (err error) {
+	err = parsley.Decode(dat, res, cfgs...)
+
+	if err == nil && !res.Validate() {
+		err = resource.NewValidationError()
 	}
-	if !res.Validate() {
-		return nil, errors.New("failed to validate resource")
-	}
+
 	return
+}
+
+func addODTField(f *[]parsley.Filter) {
+	included := false
+	for i := range *f {
+		if (*f)[i].Field == resource.ODataTypeKey {
+			included = true
+		}
+		if (*f)[i].Filter != nil {
+			addODTField(&(*f)[i].Filter)
+		}
+	}
+
+	if !included {
+		*f = append(*f, parsley.Filter{
+			Field:  resource.ODataTypeKey,
+			Filter: nil,
+		})
+	}
+}
+
+func UseResourceFilter(f []parsley.Filter) parsley.Config {
+	addODTField(&f)
+	return parsley.UseFilter(f)
 }

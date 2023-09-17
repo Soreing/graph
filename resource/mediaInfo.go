@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.mediaInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/mediainfo?view=graph-rest-1.0
 type MediaInfo struct {
 	ODataType  string `json:"@odata.type"`
 	ResourceId string `json:"resourceId,omitempty"`

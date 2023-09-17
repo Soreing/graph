@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.call
+// https://learn.microsoft.com/en-us/graph/api/resources/call?view=graph-rest-1.0
 type Call struct {
 	ODataType           string                 `json:"@odata.type"`
 	CallbackUri         string                 `json:"callbackUri,omitempty"`
@@ -29,6 +31,45 @@ func (r *Call) GetType() (ResourceType, bool) {
 }
 
 func (r *Call) Validate() bool {
-	// TODO: Finish...
+	if r.ODataType != CallODataType {
+		return false
+	}
+	if r.CallOptions != nil && !r.CallOptions.Validate() {
+		return false
+	}
+	if r.ChatInfo != nil && !r.ChatInfo.Validate() {
+		return false
+	}
+	if r.IncomingContext != nil && !r.IncomingContext.Validate() {
+		return false
+	}
+	if r.MediaConfig != nil && !r.MediaConfig.Validate() {
+		return false
+	}
+	if r.MeetingInfo != nil && !r.MeetingInfo.Validate() {
+		return false
+	}
+	if r.ResultInfo != nil && !r.ResultInfo.Validate() {
+		return false
+	}
+	if r.Source != nil && !r.Source.Validate() {
+		return false
+	}
+	if r.ToneInfo != nil && !r.ToneInfo.Validate() {
+		return false
+	}
+	if r.Transcription != nil && !r.Transcription.Validate() {
+		return false
+	}
+	for _, rs := range r.CallRoutes {
+		if !rs.Validate() {
+			return false
+		}
+	}
+	for _, rs := range r.Targets {
+		if !rs.Validate() {
+			return false
+		}
+	}
 	return true
 }

@@ -3,10 +3,12 @@ package resource
 type ResourceType int
 
 const (
-	UnknownResourceType = iota
+	NullResourceType = iota
+	UnknownResourceType
 	MixedResourceType
 	AppHostedMediaConfigResourceType
 	CallResourceType
+	CallRouteResourceType
 	CallTranscriptionInfoResourceType
 	ChatInfoResourceType
 	CommsNotificationsResourceType
@@ -21,6 +23,7 @@ const (
 	OrganizerMeetingInfoResourceType
 	ParticipantResourceType
 	ParticipantInfoResourceType
+	PublishedStateResourceType
 	RecordingInfoResourceType
 	ResultInfoResourceType
 	ServiceHostedMediaConfigResourceType
@@ -29,10 +32,11 @@ const (
 )
 
 const (
-	ODataType_Key = "@odata.type"
+	ODataTypeKey = "@odata.type"
 
 	AppHostedMediaConfigODataType     = "#microsoft.graph.appHostedMediaConfig"
 	CallODataType                     = "#microsoft.graph.call"
+	CallRouteODataType                = "#microsoft.graph.callRoute"
 	CallTranscriptionInfoODataType    = "#microsoft.graph.callTranscriptionInfo"
 	ChatInfoODataType                 = "#microsoft.graph.chatInfo"
 	CommsNotificationsODataType       = "#microsoft.graph.commsNotifications"
@@ -47,6 +51,7 @@ const (
 	OrganizerMeetingInfoODataType     = "#microsoft.graph.organizerMeetingInfo"
 	ParticipantODataType              = "#microsoft.graph.participant"
 	ParticipantInfoODataType          = "#microsoft.graph.participantInfo"
+	PublishedStateODataType           = "#microsoft.graph.publishedState"
 	RecordingInfoODataType            = "#microsoft.graph.recordingInfo"
 	ResultInfoODataType               = "#microsoft.graph.resultInfo"
 	ServiceHostedMediaConfigODataType = "#microsoft.graph.serviceHostedMediaConfig"
@@ -54,6 +59,7 @@ const (
 	ToneInfoODataType                 = "#microsoft.graph.toneInfo"
 )
 
+// GetType returns an enum ResourceType from an ODataType name
 func GetType(ODataType []byte) ResourceType {
 	switch len(ODataType) {
 	case 21:
@@ -72,6 +78,8 @@ func GetType(ODataType []byte) ResourceType {
 		}
 	case 26:
 		switch string(ODataType) {
+		case CallRouteODataType:
+			return CallRouteResourceType
 		case MediaInfoODataType:
 			return MediaInfoResourceType
 		}
@@ -88,6 +96,11 @@ func GetType(ODataType []byte) ResourceType {
 		switch string(ODataType) {
 		case ResultInfoODataType:
 			return ResultInfoResourceType
+		}
+	case 29:
+		switch string(ODataType) {
+		case PublishedStateODataType:
+			return PublishedStateResourceType
 		}
 	case 30:
 		switch string(ODataType) {
@@ -144,6 +157,8 @@ func GetType(ODataType []byte) ResourceType {
 	return UnknownResourceType
 }
 
+// NewResource returns a new Resource from an ODataType name. The object will
+// match the type specified by the ODataType
 func NewResource(ODataType []byte) Resource {
 	switch len(ODataType) {
 	case 21:
@@ -162,6 +177,8 @@ func NewResource(ODataType []byte) Resource {
 		}
 	case 26:
 		switch string(ODataType) {
+		case CallRouteODataType:
+			return &CallRoute{}
 		case MediaInfoODataType:
 			return &MediaInfo{}
 		}
@@ -178,6 +195,11 @@ func NewResource(ODataType []byte) Resource {
 		switch string(ODataType) {
 		case ResultInfoODataType:
 			return &ResultInfo{}
+		}
+	case 29:
+		switch string(ODataType) {
+		case PublishedStateODataType:
+			return &PublishedState{}
 		}
 	case 30:
 		switch string(ODataType) {

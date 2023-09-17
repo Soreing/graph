@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.incomingContext
+// https://learn.microsoft.com/en-US/graph/api/resources/incomingcontext?view=graph-rest-beta
 type IncomingContext struct {
 	ODataType             string       `json:"@odata.type"`
 	SourceParticipantId   string       `json:"sourceParticipantId,omitempty"`
@@ -15,9 +17,11 @@ func (r *IncomingContext) GetType() (ResourceType, bool) {
 func (r *IncomingContext) Validate() bool {
 	if r.ODataType == IncomingContextODataType {
 		return false
-	} else if r.OnBehalfOf != nil && !r.OnBehalfOf.Validate() {
+	}
+	if r.OnBehalfOf != nil && !r.OnBehalfOf.Validate() {
 		return false
-	} else if r.Transferor != nil && !r.Transferor.Validate() {
+	}
+	if r.Transferor != nil && !r.Transferor.Validate() {
 		return false
 	}
 	return true

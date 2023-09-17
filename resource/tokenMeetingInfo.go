@@ -1,5 +1,7 @@
 package resource
 
+// microsoft.graph.tokenMeetingInfo
+// https://learn.microsoft.com/en-us/graph/api/resources/tokenmeetinginfo?view=graph-rest-1.0
 type TokenMeetingInfo struct {
 	ODataType string `json:"@odata.type"`
 	Token     string `json:"token,omitempty"`
