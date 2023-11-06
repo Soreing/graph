@@ -187,7 +187,7 @@ func (o *Call) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err e
 					} else if string(key) == "subject" && c[17] {
 						o.Subject, err = r.String()
 					} else if string(key) == "targets" && c[18] {
-						o.Targets, err = (*ParticipantInfo)(nil).DecodeSlicePJSON(r, f[18])
+						o.Targets, err = (*InvitationParticipantInfo)(nil).DecodeSlicePJSON(r, f[18])
 					} else if string(key) == "toneInfo" && c[19] {
 						o.ToneInfo = &ToneInfo{}
 						err = o.ToneInfo.DecodeObjectPJSON(r, f[19])
@@ -878,6 +878,111 @@ func (o *IncomingContext) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filt
 	if err = r.OpenArray(); err == nil {
 		if r.Token() == reader.TerminatorToken {
 			res = []IncomingContext{}
+			err = r.CloseArray()
+		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
+			err = r.CloseArray()
+		}
+	}
+	return
+}
+
+func (o *InvitationParticipantInfo) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err error) {
+	c := [10]bool{}
+	f := [10][]parse.Filter{}
+	if filter == nil {
+		for i := range c {
+			c[i] = true
+		}
+	} else {
+		for i := range filter {
+			k := filter[i].Field
+			if k == "@odata.type" {
+				c[0] = true
+			} else if k == "clientVersion" {
+				c[1] = true
+			} else if k == "countryCode" {
+				c[2] = true
+			} else if k == "endpointId" {
+				c[3] = true
+			} else if k == "endpointType" {
+				c[4] = true
+			} else if k == "identity" {
+				c[5], f[5] = true, filter[i].Filter
+			} else if k == "languageId" {
+				c[6] = true
+			} else if k == "participantId" {
+				c[7] = true
+			} else if k == "region" {
+				c[8] = true
+			} else if k == "replacementLink" {
+				c[9] = true
+			}
+		}
+	}
+	var key []byte
+	_ = key
+	err = r.OpenObject()
+	if r.Token() != reader.TerminatorToken {
+		for err == nil {
+			if key, err = r.Key(); err == nil {
+				if r.IsNull() {
+					r.SkipNull()
+				} else {
+					if string(key) == "@odata.type" && c[0] {
+						o.ODataType, err = r.String()
+					} else if string(key) == "clientVersion" && c[1] {
+						o.ClientVersion, err = r.String()
+					} else if string(key) == "countryCode" && c[2] {
+						o.CountryCode, err = r.String()
+					} else if string(key) == "endpointId" && c[3] {
+						o.EndpointId, err = r.String()
+					} else if string(key) == "endpointType" && c[4] {
+						o.EndpointType, err = r.String()
+					} else if string(key) == "identity" && c[5] {
+						o.Identity = &IdentitySet{}
+						err = o.Identity.DecodeObjectPJSON(r, f[5])
+					} else if string(key) == "languageId" && c[6] {
+						o.LanguageId, err = r.String()
+					} else if string(key) == "participantId" && c[7] {
+						o.ParticipantId, err = r.String()
+					} else if string(key) == "region" && c[8] {
+						o.Region, err = r.String()
+					} else if string(key) == "replacementLink" && c[9] {
+						o.ReplacementLink, err = r.String()
+					} else {
+						err = r.Skip()
+					}
+				}
+				if err == nil && !r.Next() {
+					break
+				}
+			}
+		}
+	}
+	if err == nil {
+		err = r.CloseObject()
+	}
+	return
+}
+
+func (o *InvitationParticipantInfo) sequencePJSON(r *reader.Reader, filter []parse.Filter, idx int) (res []InvitationParticipantInfo, err error) {
+	var e InvitationParticipantInfo
+	if err = e.DecodeObjectPJSON(r, filter); err == nil {
+		if !r.Next() {
+			res = make([]InvitationParticipantInfo, idx+1)
+			res[idx] = e
+			return
+		} else if res, err = o.sequencePJSON(r, filter, idx+1); err == nil {
+			res[idx] = e
+		}
+	}
+	return
+}
+
+func (o *InvitationParticipantInfo) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (res []InvitationParticipantInfo, err error) {
+	if err = r.OpenArray(); err == nil {
+		if r.Token() == reader.TerminatorToken {
+			res = []InvitationParticipantInfo{}
 			err = r.CloseArray()
 		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
 			err = r.CloseArray()

@@ -15,7 +15,7 @@ func (r *IncomingContext) GetType() (ResourceType, bool) {
 }
 
 func (r *IncomingContext) Validate() bool {
-	if r.ODataType == IncomingContextODataType {
+	if r.ODataType != IncomingContextODataType {
 		return false
 	}
 	if r.OnBehalfOf != nil && !r.OnBehalfOf.Validate() {

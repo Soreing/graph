@@ -17,6 +17,7 @@ const (
 	IdentitySetResourceType
 	IdentityResourceType
 	IncomingContextResourceType
+	InvitationParticipantInfoResourceType
 	JoinMeetingIdMeetingInfoResourceType
 	MediaInfoResourceType
 	MediaStreamResourceType
@@ -34,29 +35,30 @@ const (
 const (
 	ODataTypeKey = "@odata.type"
 
-	AppHostedMediaConfigODataType     = "#microsoft.graph.appHostedMediaConfig"
-	CallODataType                     = "#microsoft.graph.call"
-	CallRouteODataType                = "#microsoft.graph.callRoute"
-	CallTranscriptionInfoODataType    = "#microsoft.graph.callTranscriptionInfo"
-	ChatInfoODataType                 = "#microsoft.graph.chatInfo"
-	CommsNotificationsODataType       = "#microsoft.graph.commsNotifications"
-	CommsNotificationODataType        = "#microsoft.graph.commsNotification"
-	OutgoingCallOptionsODataType      = "#microsoft.graph.outgoingCallOptions"
-	IdentitySetODataType              = "#microsoft.graph.identitySet"
-	IdentityODataType                 = "#microsoft.graph.identity"
-	IncomingContextODataType          = "#microsoft.graph.incomingContext"
-	JoinMeetingIdMeetingInfoODataType = "#microsoft.graph.joinMeetingIdMeetingInfo"
-	MediaInfoODataType                = "#microsoft.graph.mediaInfo"
-	MediaStreamODataType              = "#microsoft.graph.mediaStream"
-	OrganizerMeetingInfoODataType     = "#microsoft.graph.organizerMeetingInfo"
-	ParticipantODataType              = "#microsoft.graph.participant"
-	ParticipantInfoODataType          = "#microsoft.graph.participantInfo"
-	PublishedStateODataType           = "#microsoft.graph.publishedState"
-	RecordingInfoODataType            = "#microsoft.graph.recordingInfo"
-	ResultInfoODataType               = "#microsoft.graph.resultInfo"
-	ServiceHostedMediaConfigODataType = "#microsoft.graph.serviceHostedMediaConfig"
-	TokenMeetingInfoODataType         = "#microsoft.graph.tokenMeetingInfo"
-	ToneInfoODataType                 = "#microsoft.graph.toneInfo"
+	AppHostedMediaConfigODataType      = "#microsoft.graph.appHostedMediaConfig"
+	CallODataType                      = "#microsoft.graph.call"
+	CallRouteODataType                 = "#microsoft.graph.callRoute"
+	CallTranscriptionInfoODataType     = "#microsoft.graph.callTranscriptionInfo"
+	ChatInfoODataType                  = "#microsoft.graph.chatInfo"
+	CommsNotificationsODataType        = "#microsoft.graph.commsNotifications"
+	CommsNotificationODataType         = "#microsoft.graph.commsNotification"
+	OutgoingCallOptionsODataType       = "#microsoft.graph.outgoingCallOptions"
+	IdentitySetODataType               = "#microsoft.graph.identitySet"
+	IdentityODataType                  = "#microsoft.graph.identity"
+	IncomingContextODataType           = "#microsoft.graph.incomingContext"
+	InvitationParticipantInfoODataType = "#microsoft.graph.invitationParticipantInfo"
+	JoinMeetingIdMeetingInfoODataType  = "#microsoft.graph.joinMeetingIdMeetingInfo"
+	MediaInfoODataType                 = "#microsoft.graph.mediaInfo"
+	MediaStreamODataType               = "#microsoft.graph.mediaStream"
+	OrganizerMeetingInfoODataType      = "#microsoft.graph.organizerMeetingInfo"
+	ParticipantODataType               = "#microsoft.graph.participant"
+	ParticipantInfoODataType           = "#microsoft.graph.participantInfo"
+	PublishedStateODataType            = "#microsoft.graph.publishedState"
+	RecordingInfoODataType             = "#microsoft.graph.recordingInfo"
+	ResultInfoODataType                = "#microsoft.graph.resultInfo"
+	ServiceHostedMediaConfigODataType  = "#microsoft.graph.serviceHostedMediaConfig"
+	TokenMeetingInfoODataType          = "#microsoft.graph.tokenMeetingInfo"
+	ToneInfoODataType                  = "#microsoft.graph.toneInfo"
 )
 
 // GetType returns an enum ResourceType from an ODataType name
@@ -152,6 +154,11 @@ func GetType(ODataType []byte) ResourceType {
 			return JoinMeetingIdMeetingInfoResourceType
 		case ServiceHostedMediaConfigODataType:
 			return ServiceHostedMediaConfigResourceType
+		}
+	case 42:
+		switch string(ODataType) {
+		case InvitationParticipantInfoODataType:
+			return InvitationParticipantInfoResourceType
 		}
 	}
 	return UnknownResourceType
@@ -251,6 +258,11 @@ func NewResource(ODataType []byte) Resource {
 			return &JoinMeetingIdMeetingInfo{}
 		case ServiceHostedMediaConfigODataType:
 			return &ServiceHostedMediaConfig{}
+		}
+	case 42:
+		switch string(ODataType) {
+		case InvitationParticipantInfoODataType:
+			return &InvitationParticipantInfo{}
 		}
 	}
 	return nil
