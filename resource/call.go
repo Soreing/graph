@@ -13,7 +13,7 @@ type Call struct {
 	Id                  string                      `json:"id,omitempty"`
 	IncomingContext     *IncomingContext            `json:"incomingContext,omitempty"`
 	MediaConfig         *AnyResource                `json:"mediaConfig,omitempty"`
-	MediaState          string                      `json:"mediaState,omitempty"`
+	MediaState          *CallMediaState             `json:"mediaState,omitempty"`
 	MeetingInfo         *AnyResource                `json:"meetingInfo,omitempty"`
 	MyParticipantId     string                      `json:"myParticipantId,omitempty"`
 	RequestedModalities []string                    `json:"requestedModalities,omitempty"`
@@ -44,6 +44,9 @@ func (r *Call) Validate() bool {
 		return false
 	}
 	if r.MediaConfig != nil && !r.MediaConfig.Validate() {
+		return false
+	}
+	if r.MediaState != nil && !r.MediaState.Validate() {
 		return false
 	}
 	if r.MeetingInfo != nil && !r.MeetingInfo.Validate() {

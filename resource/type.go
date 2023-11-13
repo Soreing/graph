@@ -8,6 +8,7 @@ const (
 	MixedResourceType
 	AppHostedMediaConfigResourceType
 	CallResourceType
+	CallMediaStateResourceType
 	CallRouteResourceType
 	CallTranscriptionInfoResourceType
 	ChatInfoResourceType
@@ -37,6 +38,7 @@ const (
 
 	AppHostedMediaConfigODataType      = "#microsoft.graph.appHostedMediaConfig"
 	CallODataType                      = "#microsoft.graph.call"
+	CallMediaStateODataType            = "#microsoft.graph.callMediaState"
 	CallRouteODataType                 = "#microsoft.graph.callRoute"
 	CallTranscriptionInfoODataType     = "#microsoft.graph.callTranscriptionInfo"
 	ChatInfoODataType                  = "#microsoft.graph.chatInfo"
@@ -108,6 +110,11 @@ func GetType(ODataType []byte) ResourceType {
 		switch string(ODataType) {
 		case RecordingInfoODataType:
 			return RecordingInfoResourceType
+		}
+	case 31:
+		switch string(ODataType) {
+		case CallMediaStateODataType:
+			return CallMediaStateResourceType
 		}
 	case 32:
 		switch string(ODataType) {
@@ -212,6 +219,11 @@ func NewResource(ODataType []byte) Resource {
 		switch string(ODataType) {
 		case RecordingInfoODataType:
 			return &RecordingInfo{}
+		}
+	case 31:
+		switch string(ODataType) {
+		case CallMediaStateODataType:
+			return &CallMediaState{}
 		}
 	case 32:
 		switch string(ODataType) {

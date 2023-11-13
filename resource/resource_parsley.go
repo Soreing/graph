@@ -110,7 +110,7 @@ func (o *Call) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err e
 			} else if k == "mediaConfig" {
 				c[9], f[9] = true, filter[i].Filter
 			} else if k == "mediaState" {
-				c[10] = true
+				c[10], f[10] = true, filter[i].Filter
 			} else if k == "meetingInfo" {
 				c[11], f[11] = true, filter[i].Filter
 			} else if k == "myParticipantId" {
@@ -168,7 +168,8 @@ func (o *Call) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err e
 						o.MediaConfig = &AnyResource{}
 						err = o.MediaConfig.DecodeObjectPJSON(r, f[9])
 					} else if string(key) == "mediaState" && c[10] {
-						o.MediaState, err = r.String()
+						o.MediaState = &CallMediaState{}
+						err = o.MediaState.DecodeObjectPJSON(r, f[10])
 					} else if string(key) == "meetingInfo" && c[11] {
 						o.MeetingInfo = &AnyResource{}
 						err = o.MeetingInfo.DecodeObjectPJSON(r, f[11])
@@ -228,6 +229,77 @@ func (o *Call) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (res []
 	if err = r.OpenArray(); err == nil {
 		if r.Token() == reader.TerminatorToken {
 			res = []Call{}
+			err = r.CloseArray()
+		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
+			err = r.CloseArray()
+		}
+	}
+	return
+}
+
+func (o *CallMediaState) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err error) {
+	c := [2]bool{}
+	if filter == nil {
+		for i := range c {
+			c[i] = true
+		}
+	} else {
+		for i := range filter {
+			k := filter[i].Field
+			if k == "@odata.type" {
+				c[0] = true
+			} else if k == "audio" {
+				c[1] = true
+			}
+		}
+	}
+	var key []byte
+	_ = key
+	err = r.OpenObject()
+	if r.Token() != reader.TerminatorToken {
+		for err == nil {
+			if key, err = r.Key(); err == nil {
+				if r.IsNull() {
+					r.SkipNull()
+				} else {
+					if string(key) == "@odata.type" && c[0] {
+						o.ODataType, err = r.String()
+					} else if string(key) == "audio" && c[1] {
+						o.Audio, err = r.String()
+					} else {
+						err = r.Skip()
+					}
+				}
+				if err == nil && !r.Next() {
+					break
+				}
+			}
+		}
+	}
+	if err == nil {
+		err = r.CloseObject()
+	}
+	return
+}
+
+func (o *CallMediaState) sequencePJSON(r *reader.Reader, filter []parse.Filter, idx int) (res []CallMediaState, err error) {
+	var e CallMediaState
+	if err = e.DecodeObjectPJSON(r, filter); err == nil {
+		if !r.Next() {
+			res = make([]CallMediaState, idx+1)
+			res[idx] = e
+			return
+		} else if res, err = o.sequencePJSON(r, filter, idx+1); err == nil {
+			res[idx] = e
+		}
+	}
+	return
+}
+
+func (o *CallMediaState) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (res []CallMediaState, err error) {
+	if err = r.OpenArray(); err == nil {
+		if r.Token() == reader.TerminatorToken {
+			res = []CallMediaState{}
 			err = r.CloseArray()
 		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
 			err = r.CloseArray()
