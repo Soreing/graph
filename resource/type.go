@@ -21,10 +21,12 @@ const (
 	InvitationParticipantInfoResourceType
 	JoinMeetingIdMeetingInfoResourceType
 	MediaInfoResourceType
+	MediaPromptResourceType
 	MediaStreamResourceType
 	OrganizerMeetingInfoResourceType
 	ParticipantResourceType
 	ParticipantInfoResourceType
+	PlayPromptOperationResourceType
 	PublishedStateResourceType
 	RecordingInfoResourceType
 	ResultInfoResourceType
@@ -51,10 +53,12 @@ const (
 	InvitationParticipantInfoODataType = "#microsoft.graph.invitationParticipantInfo"
 	JoinMeetingIdMeetingInfoODataType  = "#microsoft.graph.joinMeetingIdMeetingInfo"
 	MediaInfoODataType                 = "#microsoft.graph.mediaInfo"
+	MediaPromptODataType               = "#microsoft.graph.mediaPrompt"
 	MediaStreamODataType               = "#microsoft.graph.mediaStream"
 	OrganizerMeetingInfoODataType      = "#microsoft.graph.organizerMeetingInfo"
 	ParticipantODataType               = "#microsoft.graph.participant"
 	ParticipantInfoODataType           = "#microsoft.graph.participantInfo"
+	PlayPromptOperationODataType       = "#microsoft.graph.playPromptOperation"
 	PublishedStateODataType            = "#microsoft.graph.publishedState"
 	RecordingInfoODataType             = "#microsoft.graph.recordingInfo"
 	ResultInfoODataType                = "#microsoft.graph.resultInfo"
@@ -91,6 +95,8 @@ func GetType(ODataType []byte) ResourceType {
 		switch string(ODataType) {
 		case IdentitySetODataType:
 			return IdentitySetResourceType
+		case MediaPromptODataType:
+			return MediaPromptResourceType
 		case MediaStreamODataType:
 			return MediaStreamResourceType
 		case ParticipantODataType:
@@ -142,6 +148,8 @@ func GetType(ODataType []byte) ResourceType {
 		switch string(ODataType) {
 		case OutgoingCallOptionsODataType:
 			return OutgoingCallOptionsResourceType
+		case PlayPromptOperationODataType:
+			return PlayPromptOperationResourceType
 		}
 	case 37:
 		switch string(ODataType) {
@@ -200,6 +208,8 @@ func NewResource(ODataType []byte) Resource {
 		switch string(ODataType) {
 		case IdentitySetODataType:
 			return &IdentitySet{}
+		case MediaPromptODataType:
+			return &MediaPrompt{}
 		case MediaStreamODataType:
 			return &MediaStream{}
 		case ParticipantODataType:
@@ -251,6 +261,8 @@ func NewResource(ODataType []byte) Resource {
 		switch string(ODataType) {
 		case OutgoingCallOptionsODataType:
 			return &OutgoingCallOptions{}
+		case PlayPromptOperationODataType:
+			return &PlayPromptOperation{}
 		}
 	case 37:
 		switch string(ODataType) {

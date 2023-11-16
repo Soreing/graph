@@ -1213,6 +1213,79 @@ func (o *MediaInfo) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (r
 	return
 }
 
+func (o *MediaPrompt) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err error) {
+	c := [2]bool{}
+	f := [2][]parse.Filter{}
+	if filter == nil {
+		for i := range c {
+			c[i] = true
+		}
+	} else {
+		for i := range filter {
+			k := filter[i].Field
+			if k == "@odata.type" {
+				c[0] = true
+			} else if k == "mediaInfo" {
+				c[1], f[1] = true, filter[i].Filter
+			}
+		}
+	}
+	var key []byte
+	_ = key
+	err = r.OpenObject()
+	if r.Token() != reader.TerminatorToken {
+		for err == nil {
+			if key, err = r.Key(); err == nil {
+				if r.IsNull() {
+					r.SkipNull()
+				} else {
+					if string(key) == "@odata.type" && c[0] {
+						o.ODataType, err = r.String()
+					} else if string(key) == "mediaInfo" && c[1] {
+						o.MediaInfo = &MediaInfo{}
+						err = o.MediaInfo.DecodeObjectPJSON(r, f[1])
+					} else {
+						err = r.Skip()
+					}
+				}
+				if err == nil && !r.Next() {
+					break
+				}
+			}
+		}
+	}
+	if err == nil {
+		err = r.CloseObject()
+	}
+	return
+}
+
+func (o *MediaPrompt) sequencePJSON(r *reader.Reader, filter []parse.Filter, idx int) (res []MediaPrompt, err error) {
+	var e MediaPrompt
+	if err = e.DecodeObjectPJSON(r, filter); err == nil {
+		if !r.Next() {
+			res = make([]MediaPrompt, idx+1)
+			res[idx] = e
+			return
+		} else if res, err = o.sequencePJSON(r, filter, idx+1); err == nil {
+			res[idx] = e
+		}
+	}
+	return
+}
+
+func (o *MediaPrompt) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (res []MediaPrompt, err error) {
+	if err = r.OpenArray(); err == nil {
+		if r.Token() == reader.TerminatorToken {
+			res = []MediaPrompt{}
+			err = r.CloseArray()
+		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
+			err = r.CloseArray()
+		}
+	}
+	return
+}
+
 func (o *MediaStream) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err error) {
 	c := [6]bool{}
 	if filter == nil {
@@ -1659,6 +1732,95 @@ func (o *ParticipantInfo) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filt
 	if err = r.OpenArray(); err == nil {
 		if r.Token() == reader.TerminatorToken {
 			res = []ParticipantInfo{}
+			err = r.CloseArray()
+		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
+			err = r.CloseArray()
+		}
+	}
+	return
+}
+
+func (o *PlayPromptOperation) DecodeObjectPJSON(r *reader.Reader, filter []parse.Filter) (err error) {
+	c := [6]bool{}
+	f := [6][]parse.Filter{}
+	if filter == nil {
+		for i := range c {
+			c[i] = true
+		}
+	} else {
+		for i := range filter {
+			k := filter[i].Field
+			if k == "@odata.type" {
+				c[0] = true
+			} else if k == "completionReason" {
+				c[1] = true
+			} else if k == "id" {
+				c[2] = true
+			} else if k == "prompts" {
+				c[3], f[3] = true, filter[i].Filter
+			} else if k == "resultInfo" {
+				c[4], f[4] = true, filter[i].Filter
+			} else if k == "status" {
+				c[5] = true
+			}
+		}
+	}
+	var key []byte
+	_ = key
+	err = r.OpenObject()
+	if r.Token() != reader.TerminatorToken {
+		for err == nil {
+			if key, err = r.Key(); err == nil {
+				if r.IsNull() {
+					r.SkipNull()
+				} else {
+					if string(key) == "@odata.type" && c[0] {
+						o.ODataType, err = r.String()
+					} else if string(key) == "completionReason" && c[1] {
+						o.CompletionReason, err = r.String()
+					} else if string(key) == "id" && c[2] {
+						o.Id, err = r.String()
+					} else if string(key) == "prompts" && c[3] {
+						o.Prompts, err = (*MediaPrompt)(nil).DecodeSlicePJSON(r, f[3])
+					} else if string(key) == "resultInfo" && c[4] {
+						o.ResultInfo = &ResultInfo{}
+						err = o.ResultInfo.DecodeObjectPJSON(r, f[4])
+					} else if string(key) == "status" && c[5] {
+						o.Status, err = r.String()
+					} else {
+						err = r.Skip()
+					}
+				}
+				if err == nil && !r.Next() {
+					break
+				}
+			}
+		}
+	}
+	if err == nil {
+		err = r.CloseObject()
+	}
+	return
+}
+
+func (o *PlayPromptOperation) sequencePJSON(r *reader.Reader, filter []parse.Filter, idx int) (res []PlayPromptOperation, err error) {
+	var e PlayPromptOperation
+	if err = e.DecodeObjectPJSON(r, filter); err == nil {
+		if !r.Next() {
+			res = make([]PlayPromptOperation, idx+1)
+			res[idx] = e
+			return
+		} else if res, err = o.sequencePJSON(r, filter, idx+1); err == nil {
+			res[idx] = e
+		}
+	}
+	return
+}
+
+func (o *PlayPromptOperation) DecodeSlicePJSON(r *reader.Reader, filter []parse.Filter) (res []PlayPromptOperation, err error) {
+	if err = r.OpenArray(); err == nil {
+		if r.Token() == reader.TerminatorToken {
+			res = []PlayPromptOperation{}
 			err = r.CloseArray()
 		} else if res, err = o.sequencePJSON(r, filter, 0); err == nil {
 			err = r.CloseArray()
