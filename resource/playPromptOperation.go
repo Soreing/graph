@@ -1,6 +1,6 @@
 package resource
 
-// microsoft.graph.mediaStream
+// microsoft.graph.playPromptOperation
 // https://learn.microsoft.com/en-us/graph/api/resources/playpromptoperation?view=graph-rest-1.0
 type PlayPromptOperation struct {
 	ODataType        string        `json:"@odata.type"`

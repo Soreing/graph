@@ -19,6 +19,7 @@ const (
 	IdentityResourceType
 	IncomingContextResourceType
 	InvitationParticipantInfoResourceType
+	InviteParticipantsOperationResourceType
 	JoinMeetingIdMeetingInfoResourceType
 	MediaInfoResourceType
 	MediaPromptResourceType
@@ -38,33 +39,34 @@ const (
 const (
 	ODataTypeKey = "@odata.type"
 
-	AppHostedMediaConfigODataType      = "#microsoft.graph.appHostedMediaConfig"
-	CallODataType                      = "#microsoft.graph.call"
-	CallMediaStateODataType            = "#microsoft.graph.callMediaState"
-	CallRouteODataType                 = "#microsoft.graph.callRoute"
-	CallTranscriptionInfoODataType     = "#microsoft.graph.callTranscriptionInfo"
-	ChatInfoODataType                  = "#microsoft.graph.chatInfo"
-	CommsNotificationsODataType        = "#microsoft.graph.commsNotifications"
-	CommsNotificationODataType         = "#microsoft.graph.commsNotification"
-	OutgoingCallOptionsODataType       = "#microsoft.graph.outgoingCallOptions"
-	IdentitySetODataType               = "#microsoft.graph.identitySet"
-	IdentityODataType                  = "#microsoft.graph.identity"
-	IncomingContextODataType           = "#microsoft.graph.incomingContext"
-	InvitationParticipantInfoODataType = "#microsoft.graph.invitationParticipantInfo"
-	JoinMeetingIdMeetingInfoODataType  = "#microsoft.graph.joinMeetingIdMeetingInfo"
-	MediaInfoODataType                 = "#microsoft.graph.mediaInfo"
-	MediaPromptODataType               = "#microsoft.graph.mediaPrompt"
-	MediaStreamODataType               = "#microsoft.graph.mediaStream"
-	OrganizerMeetingInfoODataType      = "#microsoft.graph.organizerMeetingInfo"
-	ParticipantODataType               = "#microsoft.graph.participant"
-	ParticipantInfoODataType           = "#microsoft.graph.participantInfo"
-	PlayPromptOperationODataType       = "#microsoft.graph.playPromptOperation"
-	PublishedStateODataType            = "#microsoft.graph.publishedState"
-	RecordingInfoODataType             = "#microsoft.graph.recordingInfo"
-	ResultInfoODataType                = "#microsoft.graph.resultInfo"
-	ServiceHostedMediaConfigODataType  = "#microsoft.graph.serviceHostedMediaConfig"
-	TokenMeetingInfoODataType          = "#microsoft.graph.tokenMeetingInfo"
-	ToneInfoODataType                  = "#microsoft.graph.toneInfo"
+	AppHostedMediaConfigODataType        = "#microsoft.graph.appHostedMediaConfig"
+	CallODataType                        = "#microsoft.graph.call"
+	CallMediaStateODataType              = "#microsoft.graph.callMediaState"
+	CallRouteODataType                   = "#microsoft.graph.callRoute"
+	CallTranscriptionInfoODataType       = "#microsoft.graph.callTranscriptionInfo"
+	ChatInfoODataType                    = "#microsoft.graph.chatInfo"
+	CommsNotificationsODataType          = "#microsoft.graph.commsNotifications"
+	CommsNotificationODataType           = "#microsoft.graph.commsNotification"
+	OutgoingCallOptionsODataType         = "#microsoft.graph.outgoingCallOptions"
+	IdentitySetODataType                 = "#microsoft.graph.identitySet"
+	IdentityODataType                    = "#microsoft.graph.identity"
+	IncomingContextODataType             = "#microsoft.graph.incomingContext"
+	InvitationParticipantInfoODataType   = "#microsoft.graph.invitationParticipantInfo"
+	InviteParticipantsOperationODataType = "#microsoft.graph.inviteParticipantsOperation"
+	JoinMeetingIdMeetingInfoODataType    = "#microsoft.graph.joinMeetingIdMeetingInfo"
+	MediaInfoODataType                   = "#microsoft.graph.mediaInfo"
+	MediaPromptODataType                 = "#microsoft.graph.mediaPrompt"
+	MediaStreamODataType                 = "#microsoft.graph.mediaStream"
+	OrganizerMeetingInfoODataType        = "#microsoft.graph.organizerMeetingInfo"
+	ParticipantODataType                 = "#microsoft.graph.participant"
+	ParticipantInfoODataType             = "#microsoft.graph.participantInfo"
+	PlayPromptOperationODataType         = "#microsoft.graph.playPromptOperation"
+	PublishedStateODataType              = "#microsoft.graph.publishedState"
+	RecordingInfoODataType               = "#microsoft.graph.recordingInfo"
+	ResultInfoODataType                  = "#microsoft.graph.resultInfo"
+	ServiceHostedMediaConfigODataType    = "#microsoft.graph.serviceHostedMediaConfig"
+	TokenMeetingInfoODataType            = "#microsoft.graph.tokenMeetingInfo"
+	ToneInfoODataType                    = "#microsoft.graph.toneInfo"
 )
 
 // GetType returns an enum ResourceType from an ODataType name
@@ -174,6 +176,11 @@ func GetType(ODataType []byte) ResourceType {
 		switch string(ODataType) {
 		case InvitationParticipantInfoODataType:
 			return InvitationParticipantInfoResourceType
+		}
+	case 44:
+		switch string(ODataType) {
+		case InviteParticipantsOperationODataType:
+			return InviteParticipantsOperationResourceType
 		}
 	}
 	return UnknownResourceType
@@ -287,6 +294,11 @@ func NewResource(ODataType []byte) Resource {
 		switch string(ODataType) {
 		case InvitationParticipantInfoODataType:
 			return &InvitationParticipantInfo{}
+		}
+	case 44:
+		switch string(ODataType) {
+		case InviteParticipantsOperationODataType:
+			return &InviteParticipantsOperation{}
 		}
 	}
 	return nil
